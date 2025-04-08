@@ -88,9 +88,14 @@ x = theta_D*x; % convert to unit step of 0.5 radians
 
 subplot(3,3,i)
 plot(t,x);
-title("Rotary Arm Step Response")
+hold on 
+yline(theta_D);
+title(sprintf("Rotary Arm Step Response: K_ptheta = %.1f, K_Dtheta = %.1f", K_ptheta(i), K_Dtheta(i)));
 xlabel("Time in [s]")
 ylabel("Actual Output/Theta Value in [Rads]")
+xlim([0,10]);
+ylim([0,1]);
+legend("Actual Theta Value", "Goal/Desired Theta Value", "Location","Best");
 
 end
 
@@ -99,7 +104,7 @@ end
 % Additionally, apart from the sysTF input, there is a u vector input of the same length as the t
 % vector which 
 
-% Initialize time vector
+% Initialize time vector for use in lsim
 t_min = 0;
 t_increment = 0.02;
 t_final = 10;
@@ -117,10 +122,7 @@ u_vec = theta_D*ones(length(t_vec), 1);
 vec_lsim = lsim(sysTF, u_vec, t_vec);
 
 figure();
-plot(t_vec, vec_lsim)
-
-
-
+plot(t_vec, vec_lsim);
 
 
 
