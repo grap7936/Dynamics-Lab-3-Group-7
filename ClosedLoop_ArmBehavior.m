@@ -89,13 +89,15 @@ x = theta_D*x; % convert to unit step of 0.5 radians
 subplot(3,3,i)
 plot(t,x);
 hold on 
-yline(theta_D);
+yline(theta_D); % plot desired 
+yline(theta_D + 0.2*theta_D, "--") % 20% overshoot line
+yline(theta_D - 0.2*theta_D, "--") % 20% undershoot line
 title(sprintf("Rotary Arm Step Response: K_ptheta = %.1f, K_Dtheta = %.1f", K_ptheta(i), K_Dtheta(i)));
 xlabel("Time in [s]")
 ylabel("Actual Output/Theta Value in [Rads]")
 xlim([0,10]);
 ylim([0,1]);
-legend("Actual Theta Value", "Goal/Desired Theta Value", "Location","Best");
+legend("Actual Theta Value", "Goal/Desired Theta Value", "20% Overshoot" ,"20% Undershoot", "Location","Best");
 
 end
 
@@ -116,13 +118,18 @@ t_vec = t_min:t_increment:t_final; % Note this is at random values for the time 
 % for an open loop system, our u input is our voltage input
 % Initialize a vector of u for a desired reference theta of 0.5 radians with same length as t_vec
 % and same number of columns as sysTF
+% 
+% u_vec = theta_D*ones(length(t_vec), 1);
+% u_array(i,:) = [i, u_vec];
+% 
+% vec_lsim = lsim(sysTF, u_array(i,:), t_vec);
+% 
+% figure();
+% plot(t_vec, vec_lsim);
 
-u_vec = theta_D*ones(length(t_vec), 1);
+%% Notes:
 
-vec_lsim = lsim(sysTF, u_vec, t_vec);
-
-figure();
-plot(t_vec, vec_lsim);
+% *** sysTF stored as a 1 by 1 so we either need to increment something else to plot each case, or we need to list plotting for lsim directlty after the other plotting!
 
 
 
