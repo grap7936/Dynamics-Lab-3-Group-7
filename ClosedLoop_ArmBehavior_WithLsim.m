@@ -59,7 +59,7 @@ theta_D = 0.5; % in [rads]
 % Initialize time vector
 t_min = 0;
 t_increment = 0.02;
-t_final = 10;
+t_final = 10.02;
 t_vec = t_min:t_increment:t_final; % Note this is at random values for the time being
 
 % u input for a closed loop system is vector of desired theta values (input) with same length as
@@ -68,8 +68,14 @@ t_vec = t_min:t_increment:t_final; % Note this is at random values for the time 
 % for an open loop system, our u input is our voltage input
 % Initialize a vector of u for a desired reference theta of 0.5 radians with same length as t_vec
 % and same number of columns as sysTF
-
+i = 1;
+if i == 0
 u_vec = theta_D*ones(length(t_vec), 1);
+else
+temp1 = theta_D*ones(length(t_vec)/2, 1);
+temp2 = -theta_D*ones(length(t_vec)/2, 1);
+u_vec = vertcat(temp1,temp2);
+end
 
 %% Defining Coefficients for Transfer Function System
 
@@ -102,7 +108,7 @@ x = theta_D*x; % convert to unit step of 0.5 radians
 
 % Plot Output Step values versus time
 figure();
-subplot(2,1,1)
+%subplot(2,1,1)
 plot(t,x);
 yline(0.5)
 title("Rotary Arm Step Response (Step) Set ",i)
@@ -111,15 +117,26 @@ xlim([0 10])
 ylabel("Actual Output/Theta Value in [Rads]")
 
 % Lsim Plots
+figure()
 vec_lsim = lsim(sysTF, u_vec, t_vec);
 
-subplot(2,1,2)
+%subplot(2,1,2)
+linspec1 = ['g'];
 plot(t_vec, vec_lsim)
-yline(0.5)
+hold on;
+plot(t_vec,u_vec)
+yline(theta_D*1.2)
+yline(-theta_D*1.2)
+yline(theta_D*1.05,'--')
+yline(-theta_D*1.05,'--')
+xline(1,linspec1)
+xline(6,linspec1)
 title("Rotary Arm Step Response (lsim) Set ",i)
 xlabel("Time in [s]")
 xlim([0 10])
+ylim([-1 1])
 ylabel("Actual Output/Theta Value in [Rads]")
+legend('Arm Position','Square Wave','20% Overshoot','','5% Overshoot','','Settling Time')
 
 end
 
